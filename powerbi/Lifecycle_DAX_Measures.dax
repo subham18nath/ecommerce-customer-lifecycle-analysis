@@ -1,0 +1,39 @@
+// ============================================================================
+// POWER BI DAX MEASURES - E-COMMERCE CUSTOMER LIFECYCLE & CLV DASHBOARD
+// ============================================================================
+
+Total Customers = DISTINCTCOUNT(customer_lifecycle_summary[Customer_ID])
+
+Total Orders = SUM(customer_lifecycle_summary[Total_Orders])
+
+Total Gross Revenue (CLV) = SUM(customer_lifecycle_summary[Total_CLV_INR])
+
+Average CLV (INR) = AVERAGE(customer_lifecycle_summary[Total_CLV_INR])
+
+Repeat Customers = 
+CALCULATE(
+    [Total Customers],
+    customer_lifecycle_summary[Total_Orders] >= 2
+)
+
+Repeat Purchase Rate % = DIVIDE([Repeat Customers], [Total Customers], 0)
+
+VIP Champions Count = 
+CALCULATE(
+    [Total Customers],
+    customer_lifecycle_summary[Lifecycle_Stage] = "3. VIP Champions"
+)
+
+At-Risk Revenue (INR) = 
+CALCULATE(
+    [Total Gross Revenue (CLV)],
+    customer_lifecycle_summary[Lifecycle_Stage] = "4. At-Risk (Lapsing)"
+)
+
+Churned Customers = 
+CALCULATE(
+    [Total Customers],
+    customer_lifecycle_summary[Lifecycle_Stage] IN {"5. One-Time Churned", "6. Churned Repeaters"}
+)
+
+Overall Churn Rate % = DIVIDE([Churned Customers], [Total Customers], 0)
